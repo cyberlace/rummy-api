@@ -1,0 +1,23 @@
+{
+  "name": "rummy-api",
+  "version": "1.0.0",
+  "description": "Backend for Rummy game(only api)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://naveen513@github.com/naveen513/rummy-api.git"
+  },
+  "keywords": [
+    "rummy",
+    "rummy-api"
+  ],
+  "author": "Naveen Kumar Uppuluri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/naveen513/rummy-api/issues"
+  },
+  "homepage": "https://github.com/naveen513/rummy-api#readme"
+}
