@@ -4,6 +4,7 @@
   "description": "Backend for Rummy game(only api)",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/naveen513/rummy-api/issues"
   },
-  "homepage": "https://github.com/naveen513/rummy-api#readme"
+  "homepage": "https://github.com/naveen513/rummy-api#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "db-migrate": "^0.10.0-beta.20",
+    "express": "^4.15.2",
+    "mysql": "^2.13.0",
+    "underscore": "^1.8.3"
+  }
 }
