@@ -1,6 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var usersRoute = require('./routes/users');
 
 var app = express();
 
@@ -12,7 +11,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4201');
+    var allowedOrigins = ['http://127.0.0.1:4201', 'http://localhost:4201', 'http://rummy.cyberlace.com:4201', 'http://rummy.cyberlace.com'];
+    var origin = req.headers.origin;
+    if(allowedOrigins.indexOf(origin) > -1){
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -23,7 +26,13 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+
+// Add Routers
+var usersRoute = require('./routes/users');
 app.use('/user', usersRoute);
+
+var gameTablesRoute = require('./routes/game-tables');
+app.use('/game-table', gameTablesRoute);
 
 
 

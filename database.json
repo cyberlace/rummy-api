@@ -1,0 +1,11 @@
+{
+  "defaultEnv": "dev",
+  "dev": {
+    "host": "localhost",
+    "user": "rummy",
+    "password": "Z2J1Sbq7zbXiztBy",
+    "database": "rummy",
+    "driver": "mysql",
+    "multipleStatements": true
+  }
+}

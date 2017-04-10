@@ -14,6 +14,7 @@ module.exports = {
             if (data.length == 1) {
                 success({
                     "token": "qwerty-asdfg-12345",
+                    "id": data[0].id,
                     "firstName": data[0].first_name,
                     "lastName": data[0].last_name,
                     "email": data[0].email
@@ -33,16 +34,16 @@ module.exports = {
                 db.insert('INSERT INTO users SET ?', body).then(function (data) {
                     // console.log(JSON.stringify(data) + data.insertId);
                     if (data.insertId) {
-                        success({"token": "qwerty-asdfg-12345"});
+                        success({"message": "Registered Successfully"});
                     } else {
-                        failure({"message": "Signup Failed"});
+                        failure({"message": "Registration Failed"});
                     }
                 }, function (err) {
                     failure(err);
                 });
             }
         });
-    },
+    }
 };
 
 

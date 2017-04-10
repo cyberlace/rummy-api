@@ -28,8 +28,6 @@ exports.login = function (req, res) {
 };
 
 exports.signup = function (req, res) {
-    console.log(req.body);
-    res.status(400);
     if (typeof req.body.email === 'string' && typeof req.body.password === 'string') {
         userModel.signup(
             req.body,
