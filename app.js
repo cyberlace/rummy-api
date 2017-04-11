@@ -38,6 +38,6 @@ app.use('/user', usersRoute);
 var gameTablesRoute = require('./routes/game-tables');
 app.use('/game-table', gameTablesRoute);
 
-
+console.log(process.env);
 
 app.listen(process.env.PORT || 3001);

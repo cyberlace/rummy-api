@@ -1,11 +1,19 @@
 {
-  "defaultEnv": "dev",
+  "defaultEnv": {"ENV": "NODE_ENV"},
   "dev": {
+    "driver": "mysql",
     "host": "localhost",
     "user": "rummy",
     "password": "Z2J1Sbq7zbXiztBy",
     "database": "rummy",
+    "multipleStatements": true
+  },
+  "production": {
     "driver": "mysql",
+    "host": {"ENV": "DATABASE_HOST"},
+    "user": {"ENV": "DATABASE_UN"},
+    "password": {"ENV": "DATABASE_PW"},
+    "database": {"ENV": "DATABASE_SCHEMA"},
     "multipleStatements": true
   }
 }
