@@ -28,6 +28,10 @@ app.use(function (req, res, next) {
 });
 
 // Add Routers
+app.get('/', function (req, res) {
+    res.send('Hello World!');
+});
+
 var usersRoute = require('./routes/users');
 app.use('/user', usersRoute);
 
@@ -36,4 +40,4 @@ app.use('/game-table', gameTablesRoute);
 
 
 
-app.listen(3001);
+app.listen(process.env.PORT || 3001);
