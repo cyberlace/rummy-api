@@ -2,7 +2,11 @@ var express = require('express');
 var router = express.Router();
 var gameTableController = require('../controllers/game-tables');
 
-router.route('/').get(gameTableController.getAll);
-router.route('/').post(gameTableController.create);
+var returnRouter = function(io) {
+    router.route('/').get(gameTableController.getAll(io));
+    router.route('/').post(gameTableController.create(io));
 
-module.exports = router;
+    return router;
+};
+
+module.exports = returnRouter;

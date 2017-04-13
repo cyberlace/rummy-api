@@ -2,10 +2,12 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 // Add headers
 app.use(function (req, res, next) {
@@ -13,7 +15,7 @@ app.use(function (req, res, next) {
     // Website you wish to allow to connect
     var allowedOrigins = ['http://127.0.0.1:4201', 'http://localhost:4201', 'http://rummy.cyberlace.com:4201', 'http://rummy.cyberlace.com'];
     var origin = req.headers.origin;
-    if(allowedOrigins.indexOf(origin) > -1){
+    if (allowedOrigins.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
 
@@ -35,9 +37,14 @@ app.get('/', function (req, res) {
 var usersRoute = require('./routes/users');
 app.use('/user', usersRoute);
 
-var gameTablesRoute = require('./routes/game-tables');
+var gameTablesRoute = require('./routes/game-tables')(io);
 app.use('/game-table', gameTablesRoute);
 
-console.log(process.env);
+io.on('connection', function (socket) {
+    console.log('User connected: ' + socket.id);
 
-app.listen(process.env.PORT || 3001);
+});
+
+http.listen(process.env.PORT || 5000, function () {
+    console.log("Server Started");
+});
