@@ -1,6 +1,6 @@
 var gameTableModel = require('../models/game-tables');
 
-exports.getAll = function(io) {
+exports.getAll = function(io, sockets) {
     return function (req, res) {
         gameTableModel.getAll(
             function (data) {
@@ -13,7 +13,7 @@ exports.getAll = function(io) {
     }
 };
 
-exports.create = function(io) {
+exports.create = function(io, sockets) {
     return function (req, res) {
         console.log(req.body);
         if (typeof req.body.user_id === 'number'

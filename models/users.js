@@ -1,4 +1,6 @@
 var db = require('../middleware/database.js');
+var key = '6e63c90e48214d4fc3ccb55db86da490';
+var encryptor = require('simple-encryptor')(key);
 
 module.exports = {
     getAll: function (success, failure) {
@@ -9,11 +11,11 @@ module.exports = {
         });
     },
     login: function (body, success, failure) {
-        db.query('Select * from users where email = "' + body.email + '" and password = "' + body.password + '";').then(function (data) {
+        db.query('Select * from users where email = "' + body.email + '";').then(function (data) {
             // console.log(JSON.stringify(data) + data.length);
-            if (data.length == 1) {
+            if ((data.length === 1) && (encryptor.decrypt(data[0].password) === body.password)) {
                 success({
-                    "token": "qwerty-asdfg-12345",
+                    "token": encryptor.encrypt(data[0].id),
                     "id": data[0].id,
                     "firstName": data[0].first_name,
                     "lastName": data[0].last_name,
@@ -31,6 +33,7 @@ module.exports = {
             if (data.length) {
                 failure({"message": "Email already registered"});
             } else {
+                body.password = encryptor.encrypt(body.password);
                 db.insert('INSERT INTO users SET ?', body).then(function (data) {
                     // console.log(JSON.stringify(data) + data.insertId);
                     if (data.insertId) {
