@@ -5,8 +5,16 @@ var tableName = 'game_tables';
 
 module.exports = {
     getAll: function (success, failure) {
-        db.query('Select t.*, u.first_name as user_first_name from ' + tableName +' t, users u where t.user_id = u.id').then(function (data) {
+        console.log("in model");
+        db.query('Select t.*, u.first_name as user_first_name from ' + tableName + ' t, users u where t.user_id = u.id').then(function (data) {
             success(data);
+        }, function (err) {
+            failure(err);
+        });
+    },
+    getById: function (id, success, failure) {
+        db.query('Select t.*, u.first_name as user_first_name from ' + tableName + ' t, users u where t.user_id = u.id and t.id ="' + id + '"').then(function (data) {
+            success(data[0]);
         }, function (err) {
             failure(err);
         });
@@ -29,6 +37,8 @@ module.exports = {
                     failure(err);
                 });
             }
+        }, function (err) {
+            failure(err);
         });
 
     }

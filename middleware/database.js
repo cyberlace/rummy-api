@@ -51,5 +51,17 @@ module.exports = {
                 resolve(rows);
             });
         });
+    },
+    update: function (query, data) {
+        return new Promise(function (resolve, reject) {
+            connection.query(query, data, function (err, rows) {
+                if (err) {
+                    console.log('Error Execution Query: ' + query + '\n' + err);
+                    reject(err);
+                }
+                console.log('Query executed: ' + query + JSON.stringify(data));
+                resolve(rows);
+            });
+        });
     }
 };
