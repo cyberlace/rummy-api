@@ -33,7 +33,7 @@ exports.up = function (db) {
         deck_starting_user_id: {
             type: 'int',
             unsigned: true,
-            notNull: true,
+            notNull: false,
             length: 11
         },
         round_no: {
@@ -44,7 +44,7 @@ exports.up = function (db) {
         },
         joker: {
             type: 'string',
-            notNull: true,
+            notNull: false,
             length: 2
         },
         status: {

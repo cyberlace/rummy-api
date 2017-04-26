@@ -53,6 +53,16 @@ exports.up = function (db) {
             notNull: true,
             length: 11
         },
+        picked_card: {
+            type: 'string',
+            notNull: false,
+            length: 4
+        },
+        card_picked_from: {
+            type: 'string',
+            notNull: false,
+            length: 11
+        },
         created_on: {
             type: 'datetime',
             notNull: false
