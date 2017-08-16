@@ -58,13 +58,158 @@ module.exports = {
         db.query('select * from table_rounds tr, round_snapshot rs where rs.initial_deck="0" and tr.status="Started" and tr.id=rs.table_round_id and tr.game_table_id="' + gameTableId + '"').then(
             function (data) {
                 var roundInfo = data[0];
-                roundInfo.players_deck = JSON.parse(roundInfo.players_deck);
-                roundInfo.player_deck = JSON.stringify(roundInfo.players_deck[currentUserId]);
-                roundInfo = _.pick(roundInfo, 'player_deck', 'open_deck', 'joker', 'card_position');
                 db.query('select tu.user_id, tu.position, u.first_name from table_users tu , users u where u.id = tu.user_id and tu.game_table_id="' + gameTableId + '"').then(
-                    function (data) {
-                        roundInfo.players = data;
+                    function (players) {
+                        roundInfo.players_deck = JSON.parse(roundInfo.players_deck);
+                        roundInfo.player_deck = JSON.stringify(roundInfo.players_deck[currentUserId]);
+                        roundInfo.open_deck = JSON.parse(roundInfo.open_deck);
+                        roundInfo.open_card = roundInfo.open_deck.slice(-1).pop();
+                        roundInfo.players = players;
+                        roundInfo = _.pick(roundInfo, 'player_deck', 'open_card', 'joker', 'card_position', 'players', 'card_picked_from', 'picked_card');
                         success(roundInfo);
+                    }, function (err) {
+                        failure(err);
+                    }
+                );
+            }, function (err) {
+                failure(err);
+            }
+        );
+    },
+
+    pickOpenCard: function (gameTableId, currentUserId, success, failure) {
+        db.query('select * from table_rounds tr, round_snapshot rs where rs.initial_deck="0" and tr.status="Started" and tr.id=rs.table_round_id and tr.game_table_id="' + gameTableId + '"').then(
+            function (data) {
+                var roundInfo = data[0];
+                db.query('select tu.user_id, tu.position, u.first_name from table_users tu , users u where u.id = tu.user_id and tu.game_table_id="' + gameTableId + '"').then(
+                    function (players) {
+                        roundInfo.players_deck = JSON.parse(roundInfo.players_deck);
+                        roundInfo.player_deck = roundInfo.players_deck[currentUserId];
+                        roundInfo.open_deck = JSON.parse(roundInfo.open_deck);
+                        roundInfo.players = players;
+
+                        // Pick open card
+                        roundInfo.open_card = '';
+                        roundInfo.card_picked_from = 'Open';
+                        roundInfo.picked_card = roundInfo.open_deck.pop();
+                        roundInfo.player_deck.push(roundInfo.picked_card);
+                        roundInfo.players_deck[currentUserId] = roundInfo.player_deck;
+
+                        roundInfo.player_deck = JSON.stringify(roundInfo.player_deck);
+                        roundInfo.players_deck = JSON.stringify(roundInfo.players_deck);
+                        roundInfo.open_deck = JSON.stringify(roundInfo.open_deck);
+
+                        var updateSnapshot = _.pick(roundInfo, 'open_deck', 'players_deck', 'picked_card', 'card_picked_from');
+                        db.update("UPDATE round_snapshot SET ? where initial_deck='0' and table_round_id=?", [updateSnapshot, roundInfo.table_round_id]).then(function (data) {
+                            roundInfo = _.pick(roundInfo, 'player_deck', 'open_card', 'joker', 'card_position', 'players', 'card_picked_from', 'picked_card');
+                            success(roundInfo);
+                        }, function (err) {
+                            failure(err);
+                        });
+                    }, function (err) {
+                        failure(err);
+                    }
+                );
+            }, function (err) {
+                failure(err);
+            }
+        );
+    },
+
+    pickClosedCard: function (gameTableId, currentUserId, success, failure) {
+        db.query('select * from table_rounds tr, round_snapshot rs where rs.initial_deck="0" and tr.status="Started" and tr.id=rs.table_round_id and tr.game_table_id="' + gameTableId + '"').then(
+            function (data) {
+                var roundInfo = data[0];
+                db.query('select tu.user_id, tu.position, u.first_name from table_users tu , users u where u.id = tu.user_id and tu.game_table_id="' + gameTableId + '"').then(
+                    function (players) {
+                        roundInfo.players_deck = JSON.parse(roundInfo.players_deck);
+                        roundInfo.player_deck = roundInfo.players_deck[currentUserId];
+                        roundInfo.open_deck = JSON.parse(roundInfo.open_deck);
+                        roundInfo.open_card = roundInfo.open_deck.slice(-1).pop();
+                        roundInfo.closed_deck = JSON.parse(roundInfo.closed_deck);
+                        roundInfo.players = players;
+
+                        // Pick closed card
+                        roundInfo.card_picked_from = 'Closed';
+                        roundInfo.picked_card = roundInfo.closed_deck.pop();
+                        roundInfo.player_deck.push(roundInfo.picked_card);
+                        roundInfo.players_deck[currentUserId] = roundInfo.player_deck;
+
+                        roundInfo.player_deck = JSON.stringify(roundInfo.player_deck);
+                        roundInfo.players_deck = JSON.stringify(roundInfo.players_deck);
+                        roundInfo.closed_deck = JSON.stringify(roundInfo.closed_deck);
+
+                        var updateSnapshot = _.pick(roundInfo, 'closed_deck', 'players_deck', 'picked_card', 'card_picked_from');
+                        db.update("UPDATE round_snapshot SET ? where initial_deck='0' and table_round_id=?", [updateSnapshot, roundInfo.table_round_id]).then(function (data) {
+                            roundInfo = _.pick(roundInfo, 'player_deck', 'open_card', 'joker', 'card_position', 'players', 'card_picked_from', 'picked_card');
+                            success(roundInfo);
+                        }, function (err) {
+                            failure(err);
+                        });
+                    }, function (err) {
+                        failure(err);
+                    }
+                );
+            }, function (err) {
+                failure(err);
+            }
+        );
+    },
+
+    dropCard: function (gameTableId, currentUserId, card, success, failure) {
+        db.query('select * from table_rounds tr, round_snapshot rs where rs.initial_deck="0" and tr.status="Started" and tr.id=rs.table_round_id and tr.game_table_id="' + gameTableId + '"').then(
+            function (data) {
+                var roundInfo = data[0];
+                db.query('select tu.user_id, tu.position, u.first_name from table_users tu , users u where u.id = tu.user_id and tu.game_table_id="' + gameTableId + '"').then(
+                    function (players) {
+                        roundInfo.players_deck = JSON.parse(roundInfo.players_deck);
+                        roundInfo.player_deck = roundInfo.players_deck[currentUserId];
+                        roundInfo.open_deck = JSON.parse(roundInfo.open_deck);
+                        roundInfo.open_card = roundInfo.open_deck.slice(-1).pop();
+                        roundInfo.closed_deck = JSON.parse(roundInfo.closed_deck);
+                        roundInfo.players = players;
+
+                        // Drop card
+                        var index = roundInfo.player_deck.indexOf(card);
+                        if (index > -1) {
+                            roundInfo.player_deck.splice(index, 1);
+                        } else {
+                            failure({"message": "No such card to remove"});
+                        }
+                        roundInfo.players_deck[currentUserId] = roundInfo.player_deck;
+                        roundInfo.open_deck.push(card);
+                        roundInfo.open_card = roundInfo.open_deck.slice(-1).pop();
+                        roundInfo.card_picked_from = '';
+                        roundInfo.picked_card = '';
+
+                        // Calc next person
+                        var player_count = roundInfo.players.length;
+                        var nextPosition = 0;
+                        for (var i = 0; i < player_count; i++) {
+                            if (roundInfo.players[i].user_id === roundInfo.card_position) {
+                                nextPosition = (roundInfo.players[i].position + 1) % roundInfo.players.length;
+                                if (nextPosition === 0) {
+                                    nextPosition = player_count;
+                                }
+                            }
+                        }
+                        for (i = 0; i < player_count; i++) {
+                            if (roundInfo.players[i].position === nextPosition) {
+                                roundInfo.card_position = roundInfo.players[i].user_id;
+                            }
+                        }
+
+                        roundInfo.player_deck = JSON.stringify(roundInfo.player_deck);
+                        roundInfo.players_deck = JSON.stringify(roundInfo.players_deck);
+                        roundInfo.open_deck = JSON.stringify(roundInfo.open_deck);
+
+                        var updateSnapshot = _.pick(roundInfo, 'open_deck', 'players_deck', 'card_position', 'picked_card', 'card_picked_from');
+                        db.update("UPDATE round_snapshot SET ? where initial_deck='0' and table_round_id=?", [updateSnapshot, roundInfo.table_round_id]).then(function (data) {
+                            roundInfo = _.pick(roundInfo, 'player_deck', 'open_card', 'joker', 'card_position', 'players', 'card_picked_from', 'picked_card');
+                            success(roundInfo);
+                        }, function (err) {
+                            failure(err);
+                        });
                     }, function (err) {
                         failure(err);
                     }
@@ -110,7 +255,7 @@ function createRound(gameInfo, callback) {
             joker = closedDeck.pop();
 
             // Assign positions to players
-            if (gameInfo.players.playerInfo[0].position === 0) {
+            if (!gameInfo.players.playerInfo[0].position) {
                 for (i = 0; i < gameInfo.players.count; i++) {
                     gameInfo.players.playerInfo[i].position = i + 1;
                 }

@@ -39,7 +39,7 @@ exports.up = function (db) {
         position: {
             type: 'smallint',
             unsigned: true,
-            notNull: true,
+            notNull: false,
             length: 2
         },
         status: {

@@ -17,7 +17,7 @@ exports.startRound = function (io, sockets) {
             function (data) {
                 console.log("round created");
                 var room = 'GAME_TABLE_' + req.params.game_table_id;
-                io.to(room).emit('table-round-created', {});
+                io.to(room).emit('table-round-updated', {});
             }
         );
     }
@@ -29,6 +29,54 @@ exports.getRoundInfo = function (io, sockets) {
             req.params.game_table_id,
             req.current_user_id,
             function (data) {
+                res.status(200).json(data);
+            },
+            function (err) {
+                res.status(400).json(err);
+            }
+        );
+    }
+};
+
+exports.pickOpenCard = function(io, sockets) {
+    return function (req, res) {
+        gameRoundModel.pickOpenCard(
+            req.params.game_table_id,
+            req.current_user_id,
+            function (data) {
+                res.status(200).json(data);
+            },
+            function (err) {
+                res.status(400).json(err);
+            }
+        );
+    }
+};
+
+exports.pickClosedCard = function(io, sockets) {
+    return function (req, res) {
+        gameRoundModel.pickClosedCard(
+            req.params.game_table_id,
+            req.current_user_id,
+            function (data) {
+                res.status(200).json(data);
+            },
+            function (err) {
+                res.status(400).json(err);
+            }
+        );
+    }
+};
+
+exports.dropCard = function(io, sockets) {
+    return function (req, res) {
+        gameRoundModel.dropCard(
+            req.params.game_table_id,
+            req.current_user_id,
+            req.params.card,
+            function (data) {
+                var room = 'GAME_TABLE_' + req.params.game_table_id;
+                io.to(room).emit('table-round-updated', {});
                 res.status(200).json(data);
             },
             function (err) {
